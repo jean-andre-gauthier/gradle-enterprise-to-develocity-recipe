@@ -16,15 +16,21 @@
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.develocity.GradleEnterpriseToDevelocityGradle
+name: com.develocity.gradle.GradleEnterpriseToDevelocityGroovy
 displayName: Gradle Enterprise to Develocity (Gradle builds)
 description: Migrate Gradle builds from Gradle Enterprise to Develocity
 recipeList:
-  - com.develocity.gradle.GradleEnterpriseToDevelocity2:
-      message: Foo
+  - org.openrewrite.gradle.plugins.ChangePlugin:
+      pluginId: com.gradle.enterprise
+      newPluginId: com.gradle.develocity
+      newVersion: 3.17
+  - org.openrewrite.gradle.plugins.ChangePluginVersion:
+      pluginIdPattern: com.gradle.common-custom-user-data-gradle-plugin
+      newVersion: 2.0
+  - com.develocity.gradle.RenameGradleEnterpriseReferences
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: com.develocity.GradleEnterpriseToDevelocityMaven
+name: com.develocity.maven.GradleEnterpriseToDevelocityMaven
 displayName: Gradle Enterprise to Develocity (Maven builds)
 description: Migrate Maven builds from Gradle Enterprise to Develocity
 recipeList:

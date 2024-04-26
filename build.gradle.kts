@@ -15,8 +15,10 @@ dependencies {
     // https://github.com/openrewrite/rewrite-recipe-bom/releases
     implementation(platform("org.openrewrite.recipe:rewrite-recipe-bom:latest.release"))
 
+    implementation("org.openrewrite:rewrite-core")
     implementation("org.openrewrite:rewrite-java")
     implementation("org.openrewrite.recipe:rewrite-java-dependencies")
+    implementation("org.openrewrite:rewrite-gradle")
     implementation("org.openrewrite:rewrite-yaml")
     implementation("org.assertj:assertj-core:3.24.2")
     runtimeOnly("org.openrewrite:rewrite-java-17")
