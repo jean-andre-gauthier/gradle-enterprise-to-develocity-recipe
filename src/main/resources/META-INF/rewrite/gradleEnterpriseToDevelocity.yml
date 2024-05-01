@@ -28,11 +28,11 @@ recipeList:
       pluginIdPattern: com.gradle.common-custom-user-data-gradle-plugin
       newVersion: 2.0
   - com.develocity.gradle.RenameGradleEnterpriseReferences
----
-type: specs.openrewrite.org/v1beta/recipe
-name: com.develocity.maven.GradleEnterpriseToDevelocityMaven
-displayName: Gradle Enterprise to Develocity (Maven builds)
-description: Migrate Maven builds from Gradle Enterprise to Develocity
-recipeList:
-  - com.develocity.maven.GradleEnterpriseToDevelocity3:
-      message: Bar
+#---
+#type: specs.openrewrite.org/v1beta/recipe
+#name: com.develocity.maven.GradleEnterpriseToDevelocityMaven
+#displayName: Gradle Enterprise to Develocity (Maven builds)
+#description: Migrate Maven builds from Gradle Enterprise to Develocity
+#recipeList:
+#  - com.develocity.maven.GradleEnterpriseToDevelocity3:
+#      message: Bar

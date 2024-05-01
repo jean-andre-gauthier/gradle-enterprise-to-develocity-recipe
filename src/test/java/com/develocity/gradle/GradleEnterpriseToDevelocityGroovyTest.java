@@ -1,10 +1,14 @@
 package com.develocity.gradle;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.gradle.marker.GradleSettings;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.marker.BuildTool;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.openrewrite.Tree.randomId;
 import static org.openrewrite.gradle.Assertions.buildGradle;
@@ -17,19 +21,22 @@ class GradleEnterpriseToDevelocityGroovyTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipeFromResources("com.develocity.gradle.GradleEnterpriseToDevelocityGroovy")
-          .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true).classpath("rewrite-core", "rewrite-gradle"));
+          .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true));
     }
 
     @Test
     void firstTest() {
         rewriteRun(
-            spec -> spec.allSources(s -> s.markers(new BuildTool(randomId(), BuildTool.Type.Gradle, "8.7"))),
+            spec -> spec.allSources(s -> s.markers(
+                    new BuildTool(randomId(), BuildTool.Type.Gradle, "8.7"),
+                    new GradleSettings(randomId(), new ArrayList<>(), new ArrayList<>(), new HashMap<>())
+            )),
                 // language=groovy
             settingsGradle(
                 """
                 plugins {
-                    id("com.gradle.enterprise") version "3.16.2"
-                    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+                    id "com.gradle.enterprise" version "3.16.2"
+                    id "org.gradle.toolchains.foojay-resolver-convention" version "0.8.0"
                 }
                 
                 gradleEnterprise {
@@ -54,8 +61,8 @@ class GradleEnterpriseToDevelocityGroovyTest implements RewriteTest {
                 """,
             """
                 plugins {
-                    id("com.gradle.develocity") version "3.17"
-                    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+                    id "com.gradle.develocity" version "3.17"
+                    id "org.gradle.toolchains.foojay-resolver-convention" version "0.8.0"
                 }
                 
                 develocity {
