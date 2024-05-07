@@ -25,6 +25,7 @@ import org.openrewrite.gradle.IsBuildGradle;
 import org.openrewrite.gradle.IsSettingsGradle;
 import org.openrewrite.groovy.GroovyIsoVisitor;
 import org.openrewrite.groovy.tree.G;
+import org.openrewrite.java.TreeVisitingPrinter;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.Statement;
@@ -37,12 +38,12 @@ public class RenameGradleEnterpriseReferences extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Gradle Enterprise to Develocity (Gradle builds)";
+        return "Rename gradleEnterprise { ... } to develocity { ... }";
     }
 
     @Override
     public String getDescription() {
-        return "Migrate Gradle builds from Gradle Enterprise to Develocity.";
+        return "Renames the gradleEnterprise method invocation to develocity.";
     }
 
     @Override

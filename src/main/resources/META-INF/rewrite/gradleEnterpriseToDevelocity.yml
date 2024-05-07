@@ -28,6 +28,7 @@ recipeList:
       pluginIdPattern: com.gradle.common-custom-user-data-gradle-plugin
       newVersion: 2.0
   - com.develocity.gradle.RenameGradleEnterpriseReferences
+  - com.develocity.gradle.MigratePublishMethods
 #---
 #type: specs.openrewrite.org/v1beta/recipe
 #name: com.develocity.maven.GradleEnterpriseToDevelocityMaven

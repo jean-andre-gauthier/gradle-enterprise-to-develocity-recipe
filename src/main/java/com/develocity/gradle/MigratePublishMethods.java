@@ -25,11 +25,6 @@ import org.openrewrite.gradle.IsBuildGradle;
 import org.openrewrite.gradle.IsSettingsGradle;
 import org.openrewrite.groovy.GroovyIsoVisitor;
 import org.openrewrite.groovy.tree.G;
-import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.Statement;
-
-import java.util.stream.Collectors;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
@@ -37,44 +32,49 @@ public class MigratePublishMethods extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Gradle Enterprise to Develocity (Gradle builds)";
+        return "Migrate publish methods";
     }
 
     @Override
     public String getDescription() {
-        return "Migrate Gradle builds from Gradle Enterprise to Develocity.";
+        return "Migrates strict conditional publication APIs to the new publishing.onlyIf API.";
     }
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return Preconditions.check(Preconditions.or(new IsBuildGradle<>(), new IsSettingsGradle<>()), new RenameGradleEnterpriseMethodInvocation());
+        return Preconditions.check(Preconditions.or(new IsBuildGradle<>(), new IsSettingsGradle<>()), new RenamePublishMethodInvocation());
     }
 
-
-    private static class RenameGradleEnterpriseMethodInvocation extends GroovyIsoVisitor<ExecutionContext> {
-        private static final String GE_METHOD_NAME = "gradleEnterprise";
-        private static final String DV_METHOD_NAME = "develocity";
-
+    private static class RenamePublishMethodInvocation extends GroovyIsoVisitor<ExecutionContext> {
         @Override
-        public G.CompilationUnit visitCompilationUnit(G.CompilationUnit cu, ExecutionContext ctx) {
-            cu = super.visitCompilationUnit(cu, ctx);
-            return cu.withStatements(cu.getStatements().stream().map(this::renameGradleEnterpriseMethodInvocation).collect(Collectors.toList()));
+        public G.MethodInvocation visitMethodInvocation(G.MethodInvocation mi, ExecutionContext ctx) {
+            mi = super.visitMethodInvocation(mi, ctx);
+            switch (mi.getSimpleName()) {
+                case "publishAlways()":
+                    return mi;
+                case "publishAlwaysIf()":
+                    return mi;
+                case "publishOnFailure()":
+                    return mi;
+                case "publishOnFailureIf()":
+                    return mi;
+                default:
+                    return mi;
+            }
         }
 
-        private Statement renameGradleEnterpriseMethodInvocation(Statement statement) {
-            if (statement instanceof J.MethodInvocation) {
-                J.MethodInvocation m = (J.MethodInvocation) statement;
-                if (GE_METHOD_NAME.equals(m.getSimpleName())) {
-                    JavaType.Method type = m.getMethodType();
-                    if (type != null) {
-                        type = type.withName(DV_METHOD_NAME);
-                    }
-                    m = m.withName(m.getName().withSimpleName(DV_METHOD_NAME).withType(type))
-                            .withMethodType(type);
-                }
-                return m;
-            }
-            return statement;
+        private add() {
+            Statement statement = GradleParser.builder().build()
+                    .parseInputs(singletonList(Parser.Input.fromString(source)), null, ctx)
+                    .findFirst()
+                    .map(parsed -> {
+                        if (parsed instanceof ParseError) {
+                            throw ((ParseError) parsed).toException();
+                        }
+                        return ((G.CompilationUnit) parsed);
+                    })
+                    .map(parsed -> parsed.getStatements().get(0))
+                    .orElseThrow(() -> new IllegalArgumentException("Could not parse as Gradle"));
         }
     }
 }
